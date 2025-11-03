@@ -6,11 +6,32 @@
 
 generator client {
   provider = "prisma-client"
+  // Output directory for the generated Prisma client (relative to the schema file)
+  // Adjust this path if you prefer a different location inside your project.
   output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+//table
+
+model Product {
+  id String @id @default(cuid())
+  userId String //Stack Auth User ID
+  name String
+  sku String? @unique
+  price Decimal @db.Decimal(12, 2) //only two decimal places
+  quantity Int @default(0)
+  lowStockAt Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  //indexing for sorting or filtering faster. || helps speed lookups
+  @@index([userId, name])
+  @@index([createdAt])
 }
 
